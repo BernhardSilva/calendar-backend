@@ -83,11 +83,24 @@ const loginUser = async (req, res = response) => {
   }
 };
 
-const renewToken = (req, res = response) => {
-  res.json({
-    ok: true,
-    msg: 'renew',
-  });
+const renewToken = async (req, res = response) => {
+  const { uid, name } = req;
+  try {
+    //Generate a new JWT and return in this request
+    const token = await createJWT(uid, name);
+
+    res.status(201).json({
+      ok: true,
+      msg: 'renew',
+      token,
+    });
+  } catch (error) {
+    console.log(`${error} | time: ${dateTime}`);
+    res.status(500).json({
+      ok: false,
+      msg: 'Please contact your administrator',
+    });
+  }
 };
 
 module.exports = { createUser, loginUser, renewToken };
