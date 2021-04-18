@@ -2,8 +2,8 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 const { dateTime } = require('../helpers/date');
 const User = require('../models/User');
+const { createJWT } = require('../helpers/jwt');
 
-//CREATE
 const createUser = async (req, res = response) => {
   const { email, password } = req.body;
 
@@ -23,11 +23,15 @@ const createUser = async (req, res = response) => {
 
     await user.save();
 
-    res.json({
+    //Create JWT
+    const token = await createJWT(user.id, user.name);
+
+    res.status(201).json({
       ok: true,
-      msg: 'register',
+      msg: 'User created',
       uid: user.id,
       name: user.name,
+      token,
     });
   } catch (error) {
     console.log(`${error} | time: ${dateTime}`);
@@ -38,26 +42,38 @@ const createUser = async (req, res = response) => {
   }
 };
 
-//LOGIN
-const loginUser = (req, res = response) => {
+const loginUser = async (req, res = response) => {
   const { email, password } = req.body;
 
   try {
-    let user = await User.findOne({ email });
+    const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(400).json({
         ok: false,
-        msg: `User doesn't exists with this email address`,
+        msg: `User doesn't exists with this email address`, //TODO: msg: Email and password doesn't match
       });
     }
 
-    res.json({
-        ok: true,
-        msg: 'login',
-        email,
-        password,
+    //Compare Password
+    const passwordCompare = bcrypt.compareSync(password, user.password);
+
+    if (!passwordCompare) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'Wrong password',
       });
-      
+    }
+
+    //Generate JWT
+    const token = await createJWT(user.id, user.name);
+
+    res.json({
+      ok: true,
+      uid: user.id,
+      name: user.name,
+      token,
+    });
   } catch (error) {
     console.log(`${error} | time: ${dateTime}`);
     res.status(500).json({
@@ -67,7 +83,6 @@ const loginUser = (req, res = response) => {
   }
 };
 
-//RENEW
 const renewToken = (req, res = response) => {
   res.json({
     ok: true,
