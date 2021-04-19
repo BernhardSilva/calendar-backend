@@ -1,6 +1,5 @@
 const { response } = require('express');
 const bcrypt = require('bcryptjs');
-// const { dateTime } = require('../helpers/date');
 const { errorRes500 } = require('../helpers/response-messages');
 
 const User = require('../models/User');
@@ -48,7 +47,8 @@ const loginUser = async (req, res = response) => {
     if (!user) {
       return res.status(401).json({
         ok: false,
-        msg: `User doesn't exists with this email address`, //TODO: msg: Email and password doesn't match
+        msg: `Email and password doesn't match`,
+        //REAL ERROR but user don't need to know about that: `User doesn't exists with this email address`
       });
     }
 
