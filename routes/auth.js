@@ -11,20 +11,6 @@ const { validateJWT } = require('../middlewares/jwt-validator');
 
 const router = Router();
 
-router.post(
-  '/register',
-  [
-    check('name', 'Name is required').not().isEmpty(),
-    check('email', 'Email is required, needs to be email format').isEmail(),
-    check(
-      'password',
-      'Password is required, needs to be stronger',
-    ).isStrongPassword(),
-    fieldsValidator,
-  ],
-  createUser,
-);
-
 router.get(
   '/',
   [
@@ -38,6 +24,20 @@ router.get(
     fieldsValidator,
   ],
   loginUser,
+);
+
+router.post(
+  '/register',
+  [
+    check('name', 'Name is required').not().isEmpty(),
+    check('email', 'Email is required, needs to be email format').isEmail(),
+    check(
+      'password',
+      'Password is required, needs to be stronger',
+    ).isStrongPassword(),
+    fieldsValidator,
+  ],
+  createUser,
 );
 
 router.get('/renew', validateJWT, renewToken);

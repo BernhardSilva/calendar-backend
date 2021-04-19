@@ -4,7 +4,6 @@ const cors = require('cors');
 const { dbConnection } = require('./database/config');
 
 //Create server express
-
 const app = express();
 
 //DB
@@ -20,9 +19,10 @@ app.use(express.static('public'));
 app.use(express.json());
 
 //Routes
+//auth, create, login, renew
 app.use('/api/auth', require('./routes/auth'));
-//TODO: auth, create, login, renew
-//TODO: CRUD: Events
+//CRUD: Events
+app.use('/api/events', require('./routes/envents'));
 
 //Listening
 app.listen(process.env.PORT, () => {
