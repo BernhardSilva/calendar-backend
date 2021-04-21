@@ -11,7 +11,7 @@ const { validateJWT } = require('../middlewares/jwt-validator');
 
 const router = Router();
 
-router.get(
+router.post(
   '/',
   [
     check('email', 'Email is required, needs to be email format')

@@ -86,6 +86,8 @@ const renewToken = async (req, res = response) => {
       ok: true,
       msg: 'renew',
       token,
+      uid,
+      name,
     });
   } catch (error) {
     errorRes500(error, res);
